@@ -1,9 +1,17 @@
 {%- from "grafana/map.jinja" import server with context %}
 {%- if server.get('enabled', False) %}
 
+grafana_package_repository:
+  pkgrepo.managed:
+    - name: deb https://packagecloud.io/grafana/stable/debian/ stretch main
+    - key_url: https://packagecloud.io/gpg.key
+    - file: /etc/apt/sources.list.d/grafana.list
+    - refresh_db: True
+
 grafana_packages:
   pkg.installed:
   - names: {{ server.pkgs }}
+  - pkgrepo: grafana_package_repository
 
 /etc/grafana/grafana.ini:
   file.managed:
